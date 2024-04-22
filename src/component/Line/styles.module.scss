@@ -1,0 +1,14 @@
+@import "../../colors.scss";
+
+.line {
+  height: 1px;
+  width: 100%;
+}
+
+.dark {
+  background-color: $dark-theme-line-color-1;
+}
+
+.light {
+  background-color: $light-theme-line-color-1;
+}

@@ -1,0 +1,21 @@
+@import "../../mixins.scss";
+@import "../../colors.scss";
+
+.page {
+  padding: 20px;
+  width: 100%;
+}
+
+@include medium-devices {
+  .page {
+    padding: 20px 40px 40px;
+  }
+}
+
+.dark {
+  background-color: $dark-theme-background-color;
+}
+
+.light {
+  background-color: $light-theme-background-color;
+}

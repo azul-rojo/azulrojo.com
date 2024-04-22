@@ -1,0 +1,63 @@
+@import "../../mixins.scss";
+@import "../../colors.scss";
+
+.cardHeading {
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.sectionCard {
+  align-items: stretch;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-color: $dark-theme-line-color-1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .headingPanel {
+    align-items: center;
+    display: flex;
+    font-size: 2rem;
+    justify-content: center;
+    padding: 20px 10px;
+  }
+  .descriptionPanel {
+    padding: 0 20px 40px;
+  }
+
+  .description {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  @include medium-devices {
+    flex-direction: row;
+
+    .headingPanel {
+      border-right: solid $dark-theme-line-color-1 1px;
+      padding: 20px;
+      width: 60%;
+    }
+
+    .descriptionPanel {
+      padding: 40px 20px 60px;
+      width: 40%;
+    }
+  }
+
+  @include extra-large-devices {
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-right-style: solid;
+    border-right-width: 1px;
+  }
+}
+
+.linkButton {
+  position: relative;
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-decoration: none;
+}

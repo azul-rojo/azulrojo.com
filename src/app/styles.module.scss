@@ -1,0 +1,41 @@
+@import "../colors.scss";
+@import "../mixins.scss";
+
+.app {
+  height: 100vh;
+  display: block;
+  
+  @include medium-devices {
+    display: flex;
+  }
+}
+
+.app.dark {
+  background-color: $dark-theme-background-color;
+}
+
+.app.light {
+  background-color: $light-theme-background-color;
+}
+
+.main {
+  min-height: 100vh;
+
+  &.isOpen {
+    min-height: 0;
+    max-height: calc(100vh - 48px);
+    overflow: hidden;
+  }
+}
+
+@include medium-devices {
+  .app {
+    display: flex;
+  }
+
+  .main {
+    height: 100vh;
+    overflow: auto;
+    width: 100%;
+  }
+}
