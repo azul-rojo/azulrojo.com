@@ -6,6 +6,7 @@ import { Layout } from "@/component/Layout";
 import { CustomMarkdown } from "@/component/CustomMakrdown";
 import { GlobalContext } from "@/GlobalContext";
 import { Page } from "@/component/Page";
+import { Navbar } from "@/component/Menu";
 
 interface Post {
   posts: {
@@ -16,8 +17,15 @@ interface Post {
   }
 }
 
+type NavbarData = { navbar: Navbar; };
 type PostData = Post;
-type PostProps = TinaQuery<PostData>;
+type PostProps = TinaQuery<PostData> & {
+  dataNav: NavbarData;
+  queryNav: string;
+  variablesNav: {
+    relativePath: string;
+  }
+};
 
 export default function Post(props: PostProps) {
   const { data } = useTina({
@@ -26,8 +34,23 @@ export default function Post(props: PostProps) {
     data: props.data,
   });
 
+  const { data: dataNav } = useTina({
+    query: props.queryNav,
+    variables: props.variablesNav,
+    data: props.dataNav,
+  });
+
+  const {
+    title,
+    sections,
+  } = dataNav.navbar;
+
+
   return (
-    <Layout>
+    <Layout
+      menuTitle={title}
+      linkSections={sections}
+    >
       {/* Although this isnt recommended, I found this way having a consumer updates the context "theme" */}
       <GlobalContext.Consumer>
         {({ theme }) => 
@@ -60,12 +83,18 @@ export const getStaticProps = async (ctx: any) => {
   const { data, query, variables } = await client.queries.posts({
     relativePath: ctx.params.slug + ".mdx"
   });
+  const navbar = await client.queries.navbar({
+    relativePath: "navbar.mdx"
+  });
 
   return {
     props: {
       data,
       query,
       variables,
+      dataNav: navbar.data,
+      queryNav: navbar.query,
+      variablesNav: navbar.variables
     },
   };
 };

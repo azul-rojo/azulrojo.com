@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import classNames from "classnames";
 import { HamburgerButton } from "../HamburgerButton";
 import { Theme } from "../../constants/theme";
-import { AppLink, LinkBase } from "../Link";
+import { AppLink } from "../Link";
 import { Line } from "../Line";
 
 export interface Navbar {
