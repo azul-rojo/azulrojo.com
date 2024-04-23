@@ -7,7 +7,8 @@
     "dev:next": "next dev",
     "build": "tinacms build && next build",
     "start": "tinacms build && next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "tinacms audit"
   },
   "dependencies": {
     "@tinacms/cli": "^1.5.43",
