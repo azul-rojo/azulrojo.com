@@ -7,11 +7,10 @@ interface HeadingProps {
   className?: string;
   headingType?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
   children: React.ReactNode;
-  theme?: Theme;
+  theme: Theme;
 }
 
 export const Heading = ({ className, headingType, children, theme }: HeadingProps) => {
-  theme = theme || DEFAULT_THEME;
   headingType = headingType || 'h1';
   const headingClassNames = classNames(className, styles.heading, styles[theme]); 
 
