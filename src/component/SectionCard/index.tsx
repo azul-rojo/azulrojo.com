@@ -42,3 +42,5 @@ export const SectionCard = forwardRef<HTMLDivElement, CardProps>(({ className, i
     </div>
   );
 });
+
+SectionCard.displayName = 'SectionCard';
