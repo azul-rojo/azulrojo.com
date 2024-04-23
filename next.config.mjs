@@ -6,6 +6,10 @@ const nextConfig = {
         source: '/admin',
         destination: '/admin/index.html',
       },
+      {
+        source: '/',
+        destination: '/home',
+      }
     ]
   },
   i18n: {

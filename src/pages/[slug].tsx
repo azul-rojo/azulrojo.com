@@ -6,7 +6,7 @@ import { Layout } from "@/component/Layout";
 import { CustomMarkdown } from "@/component/CustomMakrdown";
 import { GlobalContext } from "@/GlobalContext";
 import { Page } from "@/component/Page";
-import { Navbar } from "@/component/Menu";
+import { MenuSection, Navbar } from "@/component/Menu";
 
 interface Post {
   posts: {
@@ -20,6 +20,7 @@ interface Post {
 type NavbarData = { navbar: Navbar; };
 type PostData = Post;
 type PostProps = TinaQuery<PostData> & {
+  sectionsList: MenuSection[];
   dataNav: NavbarData;
   queryNav: string;
   variablesNav: {
@@ -42,14 +43,12 @@ export default function Post(props: PostProps) {
 
   const {
     title,
-    sections,
   } = dataNav.navbar;
-
 
   return (
     <Layout
       menuTitle={title}
-      linkSections={sections}
+      linkSections={props.sectionsList}
     >
       {/* Although this isnt recommended, I found this way having a consumer updates the context "theme" */}
       <GlobalContext.Consumer>
@@ -65,12 +64,14 @@ export default function Post(props: PostProps) {
 export const getStaticPaths = async () => {
   const { data } = await client.queries.postsConnection();
 
-  if (!data?.postsConnection?.edges) throw new Error("driverconnection edges not found");
+  if (!data?.postsConnection?.edges) throw new Error("postConnection edges not found");
 
   const paths = data.postsConnection.edges.map((x) => {
-    if (!x?.node) throw new Error("node does not exist in driverconnection");
+    if (!x?.node) throw new Error("node does not exist in postConnection");
 
-    return { params: { slug: x.node._sys.filename } };
+    const filename = x.node._sys.filename;
+
+    return { params: { slug: filename } };
   });
 
   return {
@@ -80,12 +81,48 @@ export const getStaticPaths = async () => {
 };
 
 export const getStaticProps = async (ctx: any) => {
+  const filename = ctx.params.slug;
   const { data, query, variables } = await client.queries.posts({
-    relativePath: ctx.params.slug + ".mdx"
+    relativePath: filename + ".mdx"
   });
   const navbar = await client.queries.navbar({
     relativePath: "navbar.mdx"
   });
+
+  const { data: postConnectionData } = await client.queries.postsConnection();
+  // create post sections by category of post
+  // TODO: create function for this logic. we can then extend it to sort it
+  const sections: { [category: string]: unknown[]}= {};
+  postConnectionData?.postsConnection?.edges?.forEach((edge) => {
+    const category = edge?.node?.category || "";
+    const text = edge?.node?.title || "";
+    const href = "/" + (edge?.node?._sys.filename === 'home' ? "" : edge?.node?._sys.filename || "");
+
+    const post = {
+      text,
+      href
+    };
+
+    if (sections[category]) sections[category].push(post);
+    else sections[category] = [post];
+  });
+
+  const sectionsList = Object.keys(sections).map((s) => {
+    const section = sections[s];
+    const title = s === 'main' ? '' : s;
+
+    return {
+      title,
+      links: section
+    };
+  });
+
+  // join navbar section and post sections
+  const allSections = [...sectionsList, ...navbar.data.navbar.sections || []].sort((a, b) => {
+    if (a?.title === '') return -1;
+    else return 0
+  });
+
 
   return {
     props: {
@@ -94,7 +131,8 @@ export const getStaticProps = async (ctx: any) => {
       variables,
       dataNav: navbar.data,
       queryNav: navbar.query,
-      variablesNav: navbar.variables
+      variablesNav: navbar.variables,
+      sectionsList: allSections
     },
   };
 };
