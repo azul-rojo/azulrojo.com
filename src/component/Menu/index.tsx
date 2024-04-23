@@ -6,15 +6,27 @@ import { Theme } from "../../constants/theme";
 import { AppLink, LinkBase } from "../Link";
 import { Line } from "../Line";
 
+export interface Navbar {
+  title: string;
+  // TODO: this should do something
+  showDrafts: boolean;
+  sections: MenuSection[];
+}
+
+export interface MenuSection {
+  title: string;
+  links: {
+    text: string;
+    href: string;
+  } [];
+}
+
 export interface MenuProps {
   title: string;
   theme: Theme;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  linkSections: {
-    sectionName?: string;
-    links: LinkBase[] ;
-  }[]
+  linkSections: MenuSection[];
 }
 
 export const Menu = ({ isOpen, linkSections, setIsOpen, theme, title } : MenuProps) => {
@@ -25,7 +37,7 @@ export const Menu = ({ isOpen, linkSections, setIsOpen, theme, title } : MenuPro
       <div className={classNames(styles.menu, styles[theme], { [styles.open]: isOpen })}>
         <Heading className={styles.title} headingType="h3" theme={theme}>{title}</Heading>
         {linkSections.map((section, index) => {
-          const { sectionName, links } = section;
+          const { title: sectionName, links } = section;
           const sectionKey = `${section}-${index}`;
           const isLastSection = index === linkSections.length - 1;
 
@@ -34,17 +46,18 @@ export const Menu = ({ isOpen, linkSections, setIsOpen, theme, title } : MenuPro
               {sectionName && <Heading headingType='h5' className={styles.sectionHeading} theme={theme}>{sectionName}</Heading>}
               {links.map((linkProps, linkIndex) => {
                 const linkKey = sectionKey + linkIndex;
-                const { href } = linkProps;
+                const { href, text } = linkProps;
 
                 return (
                   <div className={styles.linkWrapper} key={"link-" + linkIndex}>
                     <AppLink
-                      {...linkProps}
                       href={href}
                       theme={theme}
                       key={linkKey}
                       className={styles.link}
-                      onClick={() => { setIsOpen(false); }} />
+                      onClick={() => { setIsOpen(false); }}>
+                        {text}
+                      </AppLink>
                   </div>
                 )
               })}
