@@ -13,10 +13,8 @@
     "@tinacms/cli": "^1.5.43",
     "classnames": "^2.5.1",
     "next": "14.2.2",
-    "raw-loader": "^4.0.2",
     "react": "^18",
     "react-dom": "^18",
-    "react-markdown": "^9.0.1",
     "sass": "^1.75.0",
     "tinacms": "^1.6.1"
   },
