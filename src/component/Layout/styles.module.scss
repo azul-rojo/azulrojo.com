@@ -28,6 +28,10 @@
   }
 }
 
+.footer {
+  text-align: center;
+}
+
 @include medium-devices {
   .app {
     display: flex;

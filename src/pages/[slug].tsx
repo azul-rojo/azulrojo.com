@@ -1,7 +1,7 @@
 import { useTina } from "tinacms/dist/react";
 import { client } from "../../tina/__generated__/client";
 import { TinaMarkdownContent } from "tinacms/dist/rich-text";
-import { TinaQuery } from "@/interface/tina";
+import { TinaQuery, _sys } from "@/interface/tina";
 import { Layout } from "@/component/Layout";
 import { CustomMarkdown } from "@/component/CustomMakrdown";
 import { GlobalContext } from "@/GlobalContext";
@@ -10,6 +10,7 @@ import { MenuSection, Navbar } from "@/component/Menu";
 
 interface Post {
   posts: {
+    _sys: _sys;
     title: string;
     category: string;
     isDraft: boolean | null;
@@ -27,6 +28,9 @@ type PostProps = TinaQuery<PostData> & {
     relativePath: string;
   }
 };
+
+// TODO: this should come from the cms
+const REPO_NAME_URL = 'https://github.com/azul-rojo/azulrojo.com/tree/main';
 
 export default function Post(props: PostProps) {
   const { data } = useTina({
@@ -49,6 +53,7 @@ export default function Post(props: PostProps) {
     <Layout
       menuTitle={title}
       linkSections={props.sectionsList}
+      pageSource={REPO_NAME_URL + '/' + data.posts._sys.path}
     >
       {/* Although this isnt recommended, I found this way having a consumer updates the context "theme" */}
       <GlobalContext.Consumer>
@@ -94,9 +99,17 @@ export const getStaticProps = async (ctx: any) => {
   // TODO: create function for this logic. we can then extend it to sort it
   const sections: { [category: string]: unknown[]}= {};
   postConnectionData?.postsConnection?.edges?.forEach((edge) => {
-    const category = edge?.node?.category || "";
     const text = edge?.node?.title || "";
     const href = "/" + (edge?.node?._sys.filename === 'home' ? "" : edge?.node?._sys.filename || "");
+    const isDraft = edge?.node?.isDraft;
+    let category = edge?.node?.category || "";
+
+    // we edit for special categories
+    if (isDraft) {
+      category = 'Drafts';
+    } else if (category === 'main') {
+      category = '';
+    }
 
     const post = {
       text,
@@ -109,10 +122,9 @@ export const getStaticProps = async (ctx: any) => {
 
   const sectionsList = Object.keys(sections).map((s) => {
     const section = sections[s];
-    const title = s === 'main' ? '' : s;
 
     return {
-      title,
+      title: s,
       links: section
     };
   });
@@ -120,6 +132,7 @@ export const getStaticProps = async (ctx: any) => {
   // join navbar section and post sections
   const allSections = [...sectionsList, ...navbar.data.navbar.sections || []].sort((a, b) => {
     if (a?.title === '') return -1;
+    else if (a?.title === 'Drafts') return 1;
     else return 0
   });
 
