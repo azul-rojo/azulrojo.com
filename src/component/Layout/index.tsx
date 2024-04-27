@@ -34,11 +34,11 @@ export function Layout({
         />
           <div className={classNames(styles.main, styles[theme], {[styles.isOpen]: isOpen})}>
             {children}
-          <footer className={styles.footer}>
-            <AppLink href={pageSource} theme={theme}>
-              Edit this Page
-            </AppLink>
-          </footer>
+            <footer className={styles.footer}>
+              <AppLink href={pageSource} theme={theme}>
+                Edit this Page
+              </AppLink>
+            </footer>
         </div>
       </main>
     </GlobalContext.Provider>

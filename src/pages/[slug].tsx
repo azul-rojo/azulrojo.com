@@ -39,12 +39,13 @@ export default function Post(props: PostProps) {
     data: props.data,
   });
 
-  const { data: dataNav } = useTina({
-    query: props.queryNav,
-    variables: props.variablesNav,
-    data: props.dataNav,
-  });
+  // const { data: dataNav } = useTina({
+  //   query: props.queryNav,
+  //   variables: props.variablesNav,
+  //   data: props.dataNav,
+  // });
 
+  const dataNav = props.dataNav
   const {
     title,
   } = dataNav.navbar;
@@ -96,6 +97,7 @@ export const getStaticProps = async (ctx: any) => {
 
   const { data: postConnectionData } = await client.queries.postsConnection();
   // create post sections by category of post
+  // const ORDERED_SECTIONS = ['', 'Drafts']
   // TODO: create function for this logic. we can then extend it to sort it
   const sections: { [category: string]: unknown[]}= {};
   postConnectionData?.postsConnection?.edges?.forEach((edge) => {
@@ -103,6 +105,10 @@ export const getStaticProps = async (ctx: any) => {
     const href = "/" + (edge?.node?._sys.filename === 'home' ? "" : edge?.node?._sys.filename || "");
     const isDraft = edge?.node?.isDraft;
     let category = edge?.node?.category || "";
+
+    if (!navbar.data.navbar.showDrafts && isDraft) {
+      return;
+    }
 
     // we edit for special categories
     if (isDraft) {
@@ -130,12 +136,12 @@ export const getStaticProps = async (ctx: any) => {
   });
 
   // join navbar section and post sections
-  const allSections = [...sectionsList, ...navbar.data.navbar.sections || []].sort((a, b) => {
-    if (a?.title === '') return -1;
-    else if (a?.title === 'Drafts') return 1;
+  const allSections = [...sectionsList].sort((a, b) => {
+    if (a?.title === '' || b?.title === 'Drafts') return -1;
+    else if (a?.title === 'Drafts' || b?.title === '') return 1;
     else return 0
   });
-
+  allSections.push(...navbar.data.navbar.sections as unknown as MenuSection[] || [])
 
   return {
     props: {
