@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { Menu, MenuSection } from "@/component/Menu";
 import React from "react";
 import classNames from "classnames";
@@ -23,24 +24,29 @@ export function Layout({
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <GlobalContext.Provider value={{ theme, toggleTheme }}>
-      <main className={classNames(styles.app, styles[theme])}>
-        <Menu
-          title={menuTitle}
-          linkSections={linkSections}
-          theme={theme}
-          setIsOpen={setIsOpen}
-          isOpen={isOpen}
-        />
-          <div className={classNames(styles.main, styles[theme], {[styles.isOpen]: isOpen})}>
-            {children}
-            <footer className={styles.footer}>
-              <AppLink href={pageSource} theme={theme}>
-                Edit this Page
-              </AppLink>
-            </footer>
-        </div>
-      </main>
-    </GlobalContext.Provider>
+    <>
+      <Head>
+        <meta name="theme-color" content="" />
+      </Head>
+      <GlobalContext.Provider value={{ theme, toggleTheme }}>
+        <main className={classNames(styles.app, styles[theme])}>
+          <Menu
+            title={menuTitle}
+            linkSections={linkSections}
+            theme={theme}
+            setIsOpen={setIsOpen}
+            isOpen={isOpen}
+          />
+            <div className={classNames(styles.main, styles[theme], {[styles.isOpen]: isOpen})}>
+              {children}
+              <footer className={styles.footer}>
+                <AppLink href={pageSource} theme={theme}>
+                  Edit this Page
+                </AppLink>
+              </footer>
+          </div>
+        </main>
+      </GlobalContext.Provider>
+    </>
   );
 }
