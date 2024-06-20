@@ -143,6 +143,12 @@ export const getStaticProps = async (ctx: any) => {
   });
   allSections.push(...navbar.data.navbar.sections as unknown as MenuSection[] || [])
 
+  // Sorting
+  // to we can give an array with the weight .
+  // if the weight is not given then we return 0 (we have to know where the mid should be).
+  // otherwiswe we use the weight. 
+  // the weight can come from the array 
+
   return {
     props: {
       data,
